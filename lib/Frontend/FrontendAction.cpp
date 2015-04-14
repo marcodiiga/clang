@@ -206,6 +206,7 @@ bool FrontendAction::BeginSourceFile(CompilerInstance &CI,
     CI.setSourceManager(&AST->getSourceManager());
     CI.setPreprocessor(&AST->getPreprocessor());
     CI.setASTContext(&AST->getASTContext());
+    //CI.setC0FFEEDback(&AST->getC0FFEEDback);
 
     setCurrentInput(Input, std::move(AST));
 
