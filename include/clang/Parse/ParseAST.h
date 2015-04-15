@@ -18,6 +18,7 @@
 
 namespace clang {
   class Preprocessor;
+  class C0FFEED;
   class ASTConsumer;
   class ASTContext;
   class CodeCompleteConsumer;
@@ -33,7 +34,7 @@ namespace clang {
   ///
   /// \param CompletionConsumer If given, an object to consume code completion
   /// results.
-  void ParseAST(Preprocessor &pp, ASTConsumer *C,
+  void ParseAST(Preprocessor &pp, C0FFEED &c0f, ASTConsumer *C,
                 ASTContext &Ctx, bool PrintStats = false,
                 TranslationUnitKind TUKind = TU_Complete,
                 CodeCompleteConsumer *CompletionConsumer = nullptr,

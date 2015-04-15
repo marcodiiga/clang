@@ -19,6 +19,7 @@
 #include "clang/Basic/Specifiers.h"
 #include "clang/Lex/CodeCompletionHandler.h"
 #include "clang/Lex/Preprocessor.h"
+#include "clang/C0FFEED/C0FFEED.h"
 #include "clang/Sema/DeclSpec.h"
 #include "clang/Sema/LoopHint.h"
 #include "clang/Sema/Sema.h"
@@ -60,6 +61,7 @@ class Parser : public CodeCompletionHandler {
   friend class BalancedDelimiterTracker;
 
   Preprocessor &PP;
+  C0FFEED &C0F;
 
   /// Tok - The current token we are peeking ahead.  All parsing methods assume
   /// that this is valid.
@@ -234,7 +236,7 @@ class Parser : public CodeCompletionHandler {
   bool SkipFunctionBodies;
 
 public:
-  Parser(Preprocessor &PP, Sema &Actions, bool SkipFunctionBodies);
+  Parser(Preprocessor &PP, C0FFEED &C0F, Sema &Actions, bool SkipFunctionBodies);
   ~Parser();
 
   const LangOptions &getLangOpts() const { return PP.getLangOpts(); }

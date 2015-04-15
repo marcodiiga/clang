@@ -48,8 +48,8 @@ IdentifierInfo *Parser::getSEHExceptKeyword() {
   return Ident__except;
 }
 
-Parser::Parser(Preprocessor &pp, Sema &actions, bool skipFunctionBodies)
-  : PP(pp), Actions(actions), Diags(PP.getDiagnostics()),
+Parser::Parser(Preprocessor &pp, C0FFEED &c0f, Sema &actions, bool skipFunctionBodies)
+    : PP(pp), C0F(c0f), Actions(actions), Diags(PP.getDiagnostics()),
     GreaterThanIsOperator(true), ColonIsSacred(false), 
     InMessageExpression(false), TemplateParameterDepth(0),
     ParsingInObjCContainer(false) {
@@ -526,6 +526,8 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result) {
   // processing
   if (PP.isIncrementalProcessingEnabled() && Tok.is(tok::eof))
     ConsumeToken();
+
+  //C0F.parserEvent() // TODO
 
   Result = DeclGroupPtrTy();
   switch (Tok.getKind()) {

@@ -28,6 +28,7 @@
 #include "clang/Frontend/MultiplexConsumer.h"
 #include "clang/Frontend/Utils.h"
 #include "clang/Lex/HeaderSearch.h"
+#include "clang/C0FFEED/C0FFEED.h"
 #include "clang/Lex/Preprocessor.h"
 #include "clang/Lex/PreprocessorOptions.h"
 #include "clang/Sema/Sema.h"
@@ -690,6 +691,9 @@ std::unique_ptr<ASTUnit> ASTUnit::LoadFromASTFile(
   HeaderSearch &HeaderInfo = *AST->HeaderInfo;
   unsigned Counter;
 
+  AST->C0F = new C0FFEED ();
+  C0FFEED &C0F = *AST->C0F;
+
   AST->PP =
       new Preprocessor(PPOpts, AST->getDiagnostics(), AST->ASTFileLangOpts,
                        AST->getSourceManager(), HeaderInfo, *AST,
@@ -744,7 +748,7 @@ std::unique_ptr<ASTUnit> ASTUnit::LoadFromASTFile(
   AST->Consumer.reset(new ASTConsumer);
   
   // Create a semantic analysis object and tell the AST reader about it.
-  AST->TheSema.reset(new Sema(PP, Context, *AST->Consumer));
+  AST->TheSema.reset(new Sema(PP, C0F, Context, *AST->Consumer));
   AST->TheSema->Initialize();
   AST->Reader->InitializeSema(*AST->TheSema);
 

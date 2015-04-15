@@ -46,6 +46,7 @@ class Module;
 class Preprocessor;
 class Sema;
 class SourceManager;
+class C0FFEED;
 class TargetInfo;
 
 /// CompilerInstance - Helper class for managing a single instance of the Clang
@@ -83,10 +84,13 @@ class CompilerInstance : public ModuleLoader {
   IntrusiveRefCntPtr<FileManager> FileMgr;
 
   /// The source manager.
-  IntrusiveRefCntPtr<SourceManager> SourceMgr;
+  IntrusiveRefCntPtr<SourceManager> SourceMgr;  
 
   /// The preprocessor.
   IntrusiveRefCntPtr<Preprocessor> PP;
+
+  /// The C0FFEED manager.
+  IntrusiveRefCntPtr<C0FFEED> C0F;
 
   /// The AST context.
   IntrusiveRefCntPtr<ASTContext> Context;
@@ -410,6 +414,12 @@ public:
     return *PP;
   }
 
+  /// Return the C0FFEED instance.
+  C0FFEED &getC0FFEED() const {
+      assert(C0F && "Compiler instance has no C0FFEED instance!");
+      return *C0F;
+  }
+
   void resetAndLeakPreprocessor() {
     BuryPointer(PP.get());
     PP.resetWithoutRelease();
@@ -417,6 +427,9 @@ public:
 
   /// Replace the current preprocessor.
   void setPreprocessor(Preprocessor *Value);
+
+  /// Replace the C0FFEED module.
+  void setC0FFEED(C0FFEED *Value);
 
   /// }
   /// @name ASTContext

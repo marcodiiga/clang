@@ -29,6 +29,7 @@
 #include "clang/Lex/HeaderSearch.h"
 #include "clang/Lex/PTHManager.h"
 #include "clang/Lex/Preprocessor.h"
+#include "clang/C0FFEED/C0FFEED.h"
 #include "clang/Sema/CodeCompleteConsumer.h"
 #include "clang/Sema/Sema.h"
 #include "clang/Serialization/ASTReader.h"
@@ -94,6 +95,8 @@ void CompilerInstance::setSourceManager(SourceManager *Value) {
 }
 
 void CompilerInstance::setPreprocessor(Preprocessor *Value) { PP = Value; }
+
+void CompilerInstance::setC0FFEED(C0FFEED *Value) { C0F = Value; }
 
 void CompilerInstance::setASTContext(ASTContext *Value) { Context = Value; }
 
@@ -512,7 +515,7 @@ CompilerInstance::createCodeCompletionConsumer(Preprocessor &PP,
 
 void CompilerInstance::createSema(TranslationUnitKind TUKind,
                                   CodeCompleteConsumer *CompletionConsumer) {
-  TheSema.reset(new Sema(getPreprocessor(), getASTContext(), getASTConsumer(),
+  TheSema.reset(new Sema(getPreprocessor(), getC0FFEED(), getASTContext(), getASTConsumer(),
                          TUKind, CompletionConsumer));
 }
 

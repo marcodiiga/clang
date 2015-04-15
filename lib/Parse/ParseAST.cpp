@@ -81,14 +81,14 @@ void PrettyStackTraceParserEntry::print(raw_ostream &OS) const {
 /// the file is parsed.  This inserts the parsed decls into the translation unit
 /// held by Ctx.
 ///
-void clang::ParseAST(Preprocessor &PP, ASTConsumer *Consumer,
+void clang::ParseAST(Preprocessor &PP, C0FFEED &C0F, ASTConsumer *Consumer,
                      ASTContext &Ctx, bool PrintStats,
                      TranslationUnitKind TUKind,
                      CodeCompleteConsumer *CompletionConsumer,
                      bool SkipFunctionBodies) {
 
   std::unique_ptr<Sema> S(
-      new Sema(PP, Ctx, *Consumer, TUKind, CompletionConsumer));
+      new Sema(PP, C0F, Ctx, *Consumer, TUKind, CompletionConsumer));
 
   // Recover resources if we crash before exiting this method.
   llvm::CrashRecoveryContextCleanupRegistrar<Sema> CleanupSema(S.get());
@@ -110,7 +110,7 @@ void clang::ParseAST(Sema &S, bool PrintStats, bool SkipFunctionBodies) {
   ASTConsumer *Consumer = &S.getASTConsumer();
 
   std::unique_ptr<Parser> ParseOP(
-      new Parser(S.getPreprocessor(), S, SkipFunctionBodies));
+      new Parser(S.getPreprocessor(), S.getC0FFEED(), S, SkipFunctionBodies));
   Parser &P = *ParseOP.get();
 
   PrettyStackTraceParserEntry CrashInfo(P);

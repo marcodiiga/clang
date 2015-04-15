@@ -56,6 +56,7 @@ class FileEntry;
 class FileManager;
 class HeaderSearch;
 class Preprocessor;
+class C0FFEED;
 class SourceManager;
 class TargetInfo;
 class ASTFrontendAction;
@@ -90,6 +91,7 @@ private:
   std::unique_ptr<HeaderSearch>           HeaderInfo;
   IntrusiveRefCntPtr<TargetInfo>          Target;
   IntrusiveRefCntPtr<Preprocessor>        PP;
+  IntrusiveRefCntPtr<C0FFEED>             C0F;
   IntrusiveRefCntPtr<ASTContext>          Ctx;
   std::shared_ptr<TargetOptions>          TargetOpts;
   IntrusiveRefCntPtr<HeaderSearchOptions> HSOpts;
@@ -500,6 +502,9 @@ public:
 
   const Preprocessor &getPreprocessor() const { return *PP; }
         Preprocessor &getPreprocessor()       { return *PP; }
+
+  const C0FFEED &getC0FFEED() const { return *C0F; }
+        C0FFEED &getC0FFEED()       { return *C0F; }
 
   const ASTContext &getASTContext() const { return *Ctx; }
         ASTContext &getASTContext()       { return *Ctx; }

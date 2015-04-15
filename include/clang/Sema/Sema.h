@@ -149,6 +149,7 @@ namespace clang {
   class ParenListExpr;
   class ParmVarDecl;
   class Preprocessor;
+  class C0FFEED;
   class PseudoDestructorTypeStorage;
   class PseudoObjectExpr;
   class QualType;
@@ -243,6 +244,7 @@ public:
 
   const LangOptions &LangOpts;
   Preprocessor &PP;
+  C0FFEED &C0F;
   ASTContext &Context;
   ASTConsumer &Consumer;
   DiagnosticsEngine &Diags;
@@ -947,7 +949,7 @@ public:
   void addImplicitTypedef(StringRef Name, QualType T);
 
 public:
-  Sema(Preprocessor &pp, ASTContext &ctxt, ASTConsumer &consumer,
+    Sema(Preprocessor &pp, C0FFEED &c0f, ASTContext &ctxt, ASTConsumer &consumer,
        TranslationUnitKind TUKind = TU_Complete,
        CodeCompleteConsumer *CompletionConsumer = nullptr);
   ~Sema();
@@ -963,6 +965,7 @@ public:
   DiagnosticsEngine &getDiagnostics() const { return Diags; }
   SourceManager &getSourceManager() const { return SourceMgr; }
   Preprocessor &getPreprocessor() const { return PP; }
+  C0FFEED &getC0FFEED() const { return C0F; }
   ASTContext &getASTContext() const { return Context; }
   ASTConsumer &getASTConsumer() const { return Consumer; }
   ASTMutationListener *getASTMutationListener() const;
