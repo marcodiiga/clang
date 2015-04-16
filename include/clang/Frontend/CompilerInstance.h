@@ -592,6 +592,9 @@ public:
   /// and replace any existing one with it.
   void createPreprocessor(TranslationUnitKind TUKind);
 
+  /// Create a C0FFEED module for this CI
+  void createC0FFEED();
+
   std::string getSpecificModuleCachePath();
 
   /// Create the AST context.

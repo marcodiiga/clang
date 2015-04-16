@@ -370,6 +370,11 @@ void CompilerInstance::createPreprocessor(TranslationUnitKind TUKind) {
   }
 }
 
+// Create C0FFEED
+void CompilerInstance::createC0FFEED() {
+  C0F = new C0FFEED();
+}
+
 std::string CompilerInstance::getSpecificModuleCachePath() {
   // Set up the module path, including the hash for the
   // module-creation options.

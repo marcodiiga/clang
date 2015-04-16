@@ -527,7 +527,7 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result) {
   if (PP.isIncrementalProcessingEnabled() && Tok.is(tok::eof))
     ConsumeToken();
 
-  //C0F.parserEvent() // TODO
+  C0F() << PARSE << "Parsing top level declaration";
 
   Result = DeclGroupPtrTy();
   switch (Tok.getKind()) {
