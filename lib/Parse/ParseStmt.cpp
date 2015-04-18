@@ -100,6 +100,8 @@ Parser::ParseStatementOrDeclaration(StmtVector &Stmts, bool OnlyStatement,
 
   ParenBraceBracketBalancer BalancerRAIIObj(*this);
 
+  C0F() << PARSE << this->Tok << "Parsing statement or declaration";
+
   ParsedAttributesWithRange Attrs(AttrFactory);
   MaybeParseCXX11Attributes(Attrs, nullptr, /*MightBeObjCMessageSend*/ true);
 
@@ -379,6 +381,8 @@ Retry:
 StmtResult Parser::ParseExprStatement() {
   // If a case keyword is missing, this is where it should be inserted.
   Token OldToken = Tok;
+
+  C0F() << PARSE << this->Tok << "Parsing an expression statement identified as such";
 
   // expression[opt] ';'
   ExprResult Expr(ParseExpression());
@@ -1857,6 +1861,8 @@ StmtResult Parser::ParsePragmaLoopHint(StmtVector &Stmts, bool OnlyStatement,
 Decl *Parser::ParseFunctionStatementBody(Decl *Decl, ParseScope &BodyScope) {
   assert(Tok.is(tok::l_brace));
   SourceLocation LBraceLoc = Tok.getLocation();
+
+  C0F() << PARSE << this->Tok << "Entering function statement body";
 
   if (SkipFunctionBodies && (!Decl || Actions.canSkipFunctionBody(Decl)) &&
       trySkippingFunctionBody()) {

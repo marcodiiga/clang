@@ -527,7 +527,7 @@ bool Parser::ParseTopLevelDecl(DeclGroupPtrTy &Result) {
   if (PP.isIncrementalProcessingEnabled() && Tok.is(tok::eof))
     ConsumeToken();
 
-  C0F() << PARSE << "Parsing top level declaration";
+  C0F() << PARSE << "Now parsing next top level declaration or EOF" << this->Tok;
 
   Result = DeclGroupPtrTy();
   switch (Tok.getKind()) {
@@ -766,6 +766,7 @@ Parser::ParseExternalDeclaration(ParsedAttributesWithRange &attrs,
   default:
   dont_know:
     // We can't tell whether this is a function-definition or declaration yet.
+    C0F() << PARSE << "Token identifies either a function-definition or a declaration" << this->Tok;
     return ParseDeclarationOrFunctionDefinition(attrs, DS);
   }
 
@@ -836,6 +837,8 @@ Parser::ParseDeclOrFunctionDefInternal(ParsedAttributesWithRange &attrs,
                                        AccessSpecifier AS) {
   // Parse the common declaration-specifiers piece.
   ParseDeclarationSpecifiers(DS, ParsedTemplateInfo(), AS, DSC_top_level);
+
+  C0F() << PARSE << this->Tok << "Parsed declaration specifiers (class/variable/etc....) and storage specifiers";
 
   // If we had a free-standing type definition with a missing semicolon, we
   // may get this far before the problem becomes obvious.
@@ -932,6 +935,8 @@ Decl *Parser::ParseFunctionDefinition(ParsingDeclarator &D,
   // Poison SEH identifiers so they are flagged as illegal in function bodies.
   PoisonSEHIdentifiersRAIIObject PoisonSEHIdentifiers(*this, true);
   const DeclaratorChunk::FunctionTypeInfo &FTI = D.getFunctionTypeInfo();
+
+  C0F() << PARSE << this->Tok << "Parsing function definition - the specified declarator is well formed";
 
   // If this is C90 and the declspecs were completely missing, fudge in an
   // implicit int.  We do this here because this is the only place where

@@ -4908,6 +4908,8 @@ static SourceLocation getMissingDeclaratorIdLoc(Declarator &D,
 void Parser::ParseDirectDeclarator(Declarator &D) {
   DeclaratorScopeObj DeclScopeObj(*this, D.getCXXScopeSpec());
 
+  C0F() << PARSE << this->Tok << "Parsing direct declarator";
+
   if (getLangOpts().CPlusPlus && D.mayHaveIdentifier()) {
     // Don't parse FOO:BAR as if it were a typo for FOO::BAR inside a class, in
     // this context it is a bitfield. Also in range-based for statement colon

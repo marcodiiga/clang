@@ -691,7 +691,7 @@ std::unique_ptr<ASTUnit> ASTUnit::LoadFromASTFile(
   HeaderSearch &HeaderInfo = *AST->HeaderInfo;
   unsigned Counter;
 
-  AST->C0F = new C0FFEED ();
+  AST->C0F = new C0FFEED (*AST->SourceMgr);
   C0FFEED &C0F = *AST->C0F;
 
   AST->PP =
