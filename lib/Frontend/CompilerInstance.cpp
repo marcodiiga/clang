@@ -372,7 +372,7 @@ void CompilerInstance::createPreprocessor(TranslationUnitKind TUKind) {
 
 // Create C0FFEED
 void CompilerInstance::createC0FFEED() {
-  C0F = new C0FFEED (getSourceManager ());
+  C0F = new C0FFEED (this);
 }
 
 std::string CompilerInstance::getSpecificModuleCachePath() {

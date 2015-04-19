@@ -62,6 +62,7 @@ class Parser : public CodeCompletionHandler {
 
   Preprocessor &PP;
   C0FFEED &C0F;
+  friend class StreamHelper; // Allows parser private internals access
 
   /// Tok - The current token we are peeking ahead.  All parsing methods assume
   /// that this is valid.
