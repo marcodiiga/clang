@@ -155,6 +155,11 @@ Parser::ParseExpressionWithLeadingExtension(SourceLocation ExtLoc) {
 
 /// \brief Parse an expr that doesn't include (top-level) commas.
 ExprResult Parser::ParseAssignmentExpression(TypeCastState isTypeCast) {
+
+  C0F() << PARSE << this->Tok << "Parsing assignment-expression (no top-level commas) ~ " <<
+    "this diverges from C99 since it should have immediately been parsed as unary-expression " <<
+    "(see Parser::ParseExpression)";
+
   if (Tok.is(tok::code_completion)) {
     Actions.CodeCompleteOrdinaryName(getCurScope(), Sema::PCC_Expression);
     cutOffParsing();
@@ -654,6 +659,11 @@ ExprResult Parser::ParseCastExpression(bool isUnaryExpression,
                                        bool isAddressOfOperand,
                                        bool &NotCastExpr,
                                        TypeCastState isTypeCast) {
+
+  C0F() << PARSE << this->Tok << "Parsing " <<
+    (isUnaryExpression ? "unary-expression" : "cast-expression") <<
+    (isAddressOfOperand ? " operand of get-address of" : "");
+
   ExprResult Res;
   tok::TokenKind SavedKind = Tok.getKind();
   NotCastExpr = false;
@@ -1318,6 +1328,10 @@ ExprResult Parser::ParseCastExpression(bool isUnaryExpression,
 /// \endverbatim
 ExprResult
 Parser::ParsePostfixExpressionSuffix(ExprResult LHS) {
+
+  C0F() << PARSE << this->Tok << "Parsed a primary postfix-expression, checking for additional" <<
+    " suffixes (arguments, etc..)";
+
   // Now that the primary-expression piece of the postfix-expression has been
   // parsed, see if there are any postfix-expression pieces here.
   SourceLocation Loc;

@@ -2,10 +2,12 @@
 #ifndef LLVM_CLANG_C0FFEED_C0FFEED_H_
 #define LLVM_CLANG_C0FFEED_C0FFEED_H_
 
+#include "clang/AST/Expr.h"
 #include "clang/Basic/IdentifierTable.h"
 #include "clang/Basic/LLVM.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Parse/Parser.h"
+#include "clang/Sema/Scope.h"
 #include "llvm/ADT/IntrusiveRefCntPtr.h"
 #include <utility>
 #include <vector>
@@ -13,20 +15,18 @@
 
 namespace clang {
 
-  enum C0phase {GENERIC, PARSE, SEMA};
+  enum C0phase {GENERIC, PARSE, SEMA};  
+
+  class PrintInfo { // Base class for data objects
+  public:
+    virtual void print() = 0;
+  };
 
   struct LineInfo {
     unsigned int pos;
     unsigned int selcount;
     LineInfo() : pos(-1), selcount(-1) {}
     LineInfo(unsigned int p, unsigned int s) : pos(p), selcount(s) {}
-  };
-
-  class C0FFEED;
-
-  class PrintInfo { // Base class for data objects
-  public:
-    virtual void print() = 0;
   };
 
   class TokenData : public PrintInfo {
@@ -45,6 +45,19 @@ namespace clang {
     void print();
     AnnotationData(std::string st) : statement(st) {}
   };
+
+  class ExpressionData : public PrintInfo {
+  private:
+    std::string scope;
+    std::string expression;
+  public:
+    void print();
+    ExpressionData() = default;
+    void setScope(std::string sc) { scope = sc; }
+    void setExpression(std::string ex) { expression = ex; }
+  };
+
+  class C0FFEED;
 
   // A StreamEvent is an event happened at any phase. It might be
   // identified by a specific phase and additional infos
@@ -79,11 +92,11 @@ namespace clang {
     }
     const CompilerInstance *CI;
     // Getters
-    const SourceManager& getSourceManager() {
+    const SourceManager& getSourceManager() const {
       assert(CI != nullptr && "Missing CompilerInstance (ASTUnit support is missing)");
       return CI->getSourceManager();
     }
-    const ASTContext& getASTContext() {
+    const ASTContext& getASTContext() const {
       assert(CI != nullptr && "Missing CompilerInstance (ASTUnit support is missing)");
       return CI->getASTContext();
     }
@@ -127,6 +140,12 @@ namespace clang {
 
   template<>
   StreamHelper& StreamHelper::operator<< <Token&> (Token& tok);
+
+  template<>
+  StreamHelper& StreamHelper::operator<< <Scope&> (Scope& scope);
+
+  template<>
+  StreamHelper& StreamHelper::operator<< <Expr&> (Expr& expr);
 
 } // end namespace clang
 

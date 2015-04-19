@@ -36,6 +36,12 @@ void TokenData::print() { // TODO: line count would be nice
   std::cout << ss.str() << std::endl;
 }
 
+void ExpressionData::print() {
+  std::stringstream ss;
+  ss << scope << " " << expression;
+  std::cout << ss.str() << std::endl;
+}
+
 void StreamEvent::prettyPrint() {
 
   std::stringstream ss;
@@ -67,9 +73,18 @@ StreamHelper& StreamHelper::operator << <C0phase> (C0phase&& p) {
   return *this;
 }
 
+namespace {
+  std::string exprPrintPretty(const ASTContext& astCnt, const Expr& ex) {
+    std::string statement;
+    llvm::raw_string_ostream oss(statement);
+    ex.printPretty(oss, nullptr, PrintingPolicy(astCnt.getLangOpts()));
+    oss.flush();
+    return statement;
+  }
+}
+
 template<>
 StreamHelper& StreamHelper::operator << <Token&> (Token& tok) {
-
 
   if (tok.isAnnotation()) {
     // Annotation: this token was already parsed (an annotation is an identified placeholder)
@@ -77,10 +92,7 @@ StreamHelper& StreamHelper::operator << <Token&> (Token& tok) {
       case tok::annot_primary_expr: {
         auto exprRes = Parser::getExprAnnotation(tok);
         auto expr = exprRes.get();
-        std::string statement;
-        llvm::raw_string_ostream oss(statement);
-        expr->printPretty(oss, nullptr, PrintingPolicy(C0F.getASTContext().getLangOpts()));
-        oss.flush();
+        std::string statement = exprPrintPretty(C0F.getASTContext(), *expr);
         data = std::make_unique<AnnotationData>(statement);
       } break;
       default:
@@ -95,5 +107,58 @@ StreamHelper& StreamHelper::operator << <Token&> (Token& tok) {
     data = std::make_unique<TokenData>(li, fb);
   }
 
+  return *this;
+}
+
+template<>
+StreamHelper& StreamHelper::operator << <Scope&> (Scope& scope) {
+  
+  std::stringstream ssFlags;
+  ssFlags << "Scope: [";
+  unsigned int flags = scope.getFlags();
+
+#define CHECKANDSTREAM(X,F) do { \
+  if ((X & F) == F)              \
+    ssFlags << " " << #F;        \
+  } while(0)
+
+  using FL = Scope::ScopeFlags;
+  CHECKANDSTREAM (flags, FL::FnScope);
+  CHECKANDSTREAM (flags, FL::BreakScope);
+  CHECKANDSTREAM (flags, FL::ContinueScope);
+  CHECKANDSTREAM (flags, FL::DeclScope);
+  CHECKANDSTREAM (flags, FL::ControlScope);
+  CHECKANDSTREAM (flags, FL::ClassScope);
+  CHECKANDSTREAM (flags, FL::BlockScope);
+  CHECKANDSTREAM (flags, FL::TemplateParamScope);
+  CHECKANDSTREAM (flags, FL::FunctionPrototypeScope);
+  CHECKANDSTREAM (flags, FL::FunctionDeclarationScope);
+  CHECKANDSTREAM (flags, FL::SwitchScope);
+  CHECKANDSTREAM (flags, FL::TryScope);
+  CHECKANDSTREAM (flags, FL::FnTryCatchScope);
+  CHECKANDSTREAM (flags, FL::EnumScope);
+  CHECKANDSTREAM (flags, FL::SEHTryScope);
+  CHECKANDSTREAM (flags, FL::SEHExceptScope);
+  CHECKANDSTREAM (flags, FL::SEHFilterScope);  
+  
+  ssFlags << " ]";
+  auto ptr = data.get();
+  if (ptr == nullptr) {
+    data = std::make_unique<ExpressionData>();
+  }
+  static_cast<ExpressionData*>(data.get())->setScope(ssFlags.str());
+  return *this;
+}
+
+template<>
+StreamHelper& StreamHelper::operator << <Expr&> (Expr& expr) {
+  std::string expression = exprPrintPretty(C0F.getASTContext(), expr);
+  auto ptr = data.get();
+  if (ptr == nullptr) {
+    data = std::make_unique<ExpressionData>();
+  }
+  std::stringstream ex;
+  ex << "Expression: " << expression;
+  static_cast<ExpressionData*>(data.get())->setExpression(ex.str());
   return *this;
 }

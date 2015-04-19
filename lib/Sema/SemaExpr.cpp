@@ -29,6 +29,7 @@
 #include "clang/Basic/PartialDiagnostic.h"
 #include "clang/Basic/SourceManager.h"
 #include "clang/Basic/TargetInfo.h"
+#include "clang/C0FFEED/C0FFEED.h"
 #include "clang/Lex/LiteralSupport.h"
 #include "clang/Lex/Preprocessor.h"
 #include "clang/Sema/AnalysisBasedWarnings.h"
@@ -4615,6 +4616,9 @@ ExprResult
 Sema::ActOnCallExpr(Scope *S, Expr *Fn, SourceLocation LParenLoc,
                     MultiExprArg ArgExprs, SourceLocation RParenLoc,
                     Expr *ExecConfig, bool IsExecConfig) {
+
+  C0F() << SEMA << *S << *Fn << "Analyzing function call";
+
   // Since this might be a postfix expression, get rid of ParenListExprs.
   ExprResult Result = MaybeConvertParenListExprToParenExpr(S, Fn);
   if (Result.isInvalid()) return ExprError();
@@ -4781,6 +4785,9 @@ Sema::BuildResolvedCallExpr(Expr *Fn, NamedDecl *NDecl,
                             ArrayRef<Expr *> Args,
                             SourceLocation RParenLoc,
                             Expr *Config, bool IsExecConfig) {
+
+  C0F() << SEMA << *Fn << "Overload resolution was successful, building call to resolved expression"; //TODO NDecl
+
   FunctionDecl *FDecl = dyn_cast_or_null<FunctionDecl>(NDecl);
   unsigned BuiltinID = (FDecl ? FDecl->getBuiltinID() : 0);
 

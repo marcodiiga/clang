@@ -23,6 +23,7 @@
 #include "clang/Basic/DiagnosticOptions.h"
 #include "clang/Basic/PartialDiagnostic.h"
 #include "clang/Basic/TargetInfo.h"
+#include "clang/C0FFEED/C0FFEED.h"
 #include "clang/Sema/Initialization.h"
 #include "clang/Sema/Lookup.h"
 #include "clang/Sema/SemaInternal.h"
@@ -10855,6 +10856,10 @@ ExprResult Sema::BuildOverloadedCallExpr(Scope *S, Expr *Fn,
                                          SourceLocation RParenLoc,
                                          Expr *ExecConfig,
                                          bool AllowTypoCorrection) {
+
+  C0F() << SEMA << *S << *Fn << "Function call marked as an unresolved overload set,"
+    << " now attempting to resolve the function call to a specific function (overload resolution)";
+
   OverloadCandidateSet CandidateSet(Fn->getExprLoc(),
                                     OverloadCandidateSet::CSK_Normal);
   ExprResult result;
@@ -10866,6 +10871,22 @@ ExprResult Sema::BuildOverloadedCallExpr(Scope *S, Expr *Fn,
   OverloadCandidateSet::iterator Best;
   OverloadingResult OverloadResult =
       CandidateSet.BestViableFunction(*this, Fn->getLocStart(), Best);
+
+  switch (OverloadResult) {
+    case OR_Success: {
+      C0F() << SEMA << *Fn << "Overloading result was successful";
+    }break;
+    case OR_No_Viable_Function: {
+      C0F() << SEMA << *Fn << "Overloading result - no viable function found";
+    }break;
+    case OR_Ambiguous: {
+      C0F() << SEMA << *Fn << "Overloading result - ambiguous function call";
+    }break;
+    case OR_Deleted: {
+      C0F() << SEMA << *Fn << "Overloading result - succeeded but refers to a deleted function";
+    }break;
+  };
+    
 
   return FinishOverloadedCallExpr(*this, S, Fn, ULE, LParenLoc, Args,
                                   RParenLoc, ExecConfig, &CandidateSet,
